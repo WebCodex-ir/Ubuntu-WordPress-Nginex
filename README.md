@@ -236,6 +236,34 @@ sudo certbot --nginx -d blog.yourdomain.ir --email youremail@example.com --agree
 
 ---
 
+## 🎲 گراف زنده منابع سرور با Netdata
+
+برای نصب Netdata و مشاهده گراف منابع سرور در داشبورد تحت وب:
+
+```bash
+bash <(curl -Ss https://my-netdata.io/kickstart.sh)
+```
+
+سپس در مرورگر برو به:
+```
+http://your-server-ip:19999
+```
+و همه منابع را به صورت گراف زنده ببین!
+
+
+## 🎲 گراف زنده منابع در ترمینال
+
+### نصب و اجرا glances:
+```bash
+sudo apt install glances -y
+glances
+```
+### نصب و اجرا bashtop:
+```bash
+sudo apt install bashtop -y
+bashtop
+```
+-------------------------------------------------
 
 ## 📊 سوالات رایج
 
