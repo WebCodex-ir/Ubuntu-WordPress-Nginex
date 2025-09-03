@@ -55,6 +55,12 @@ sudo mv wp-cli.phar /usr/local/bin/wp
 wp plugin activate plugin-slug --path=/var/www/دامنه‌ات
 wp plugin deactivate plugin-slug --path=/var/www/دامنه‌ات
 ```
+
+#### لیست افزونه‌ها:
+```bash
+wp plugin list --path=/var/www/دامنه‌ات
+```
+
 ---
 
 ## 👀 مانیتورینگ منابع سرور
@@ -72,16 +78,124 @@ chmod +x server_monitor.sh
 ./server_monitor.sh
 ```
 
+نمونه اسکریپت:
+```bash
+#!/bin/bash
+while true; do
+    clear
+    echo "========= مانیتورینگ منابع سرور ========="
+    echo "زمان: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "------ مصرف CPU ------"
+    top -b -n 1 | grep \"Cpu(s)\" | awk '{print $2 + $4}' | xargs printf \"CPU Usage: %.2f%%\\n\"
+    echo \"------ مصرف RAM ------\"
+    free -h | awk '/Mem:/ {print \"RAM Used: \"$3 \" / \" $2}'
+    echo \"------ مصرف دیسک ------\"
+    df -h / | awk 'NR==2 {print \"Disk Used: \"$3 \" / \" $2}'
+    echo \"------ مصرف شبکه ------\"
+    ifstat 1 1 | awk 'NR==3 {print \"Network IN: \"$1\" KB/s | OUT: \"$2\" KB/s\"}'
+    echo \"------ ۵ سرویس پرمصرف ------\"
+    ps -eo pid,comm,%cpu,%mem --sort=-%cpu | head -n 6
+    sleep 5
+done
+```
+
 ---
 
-## 💡 نکات امنیتی و سرعت
+## 🚦 بررسی باز و بسته بودن پورت‌ها
 
-- SSL رایگان و تمدید خودکار (Certbot)
-- پورت SSH اختصاصی و غیرفعال بودن ورود root و پسورد
-- UFW و Fail2Ban فعال و تنظیم‌شده
-- Redis و Gzip برای کشینگ و افزایش سرعت
-- MariaDB Tuning برای سرعت بیشتر دیتابیس
-- Netdata برای مانیتورینگ دائم سرور
+برای چک کردن وضعیت پورت‌ها و فایروال:
+```bash
+sudo ss -tuln
+sudo netstat -tuln
+sudo ufw status numbered
+nc -zv SERVER_IP PORT
+# مثال:
+nc -zv your.server.ip 3306
+```
+
+---
+
+## ⚡ اتصال افزونه LiteSpeed Cache وردپرس به Redis
+
+### ۱. نصب Redis روی سرور
+```bash
+sudo apt install redis-server php-redis -y
+sudo systemctl enable redis-server
+sudo systemctl start redis-server
+```
+
+### ۲. تنظیمات LiteSpeed Cache برای Redis
+1. افزونه LiteSpeed Cache را نصب و فعال کن.
+2. مسیر: LiteSpeed Cache > Cache > Object
+3. گزینه‌ها:
+   - Enable Object Cache: ON
+   - Method: Redis
+   - Host: localhost
+   - Port: 6379
+   - ذخیره تنظیمات و مشاهده وضعیت اتصال (Connected)
+
+### نکات امنیتی Redis:
+- مقدار bind در `/etc/redis/redis.conf` روی `127.0.0.1` باشد.
+- برای باز کردن پورت (در صورت نیاز):  
+  `sudo ufw allow 6379/tcp`
+- اضافه کردن پسورد به Redis:  
+  ```
+  requirepass YourStrongPassword
+  ```
+  و ری‌استارت Redis:
+  ```bash
+  sudo systemctl restart redis-server
+  ```
+
+---
+
+## 📦 بکاپ‌گیری از دیتابیس و فایل‌های سایت
+
+### بکاپ دیتابیس وردپرس با mysqldump:
+```bash
+mysqldump -u USER -p'PASSWORD' DATABASE > /home/backup/wp-db-$(date +%Y-%m-%d_%H-%M-%S).sql
+```
+> قبلش پوشه بکاپ را بساز:
+> ```bash
+> mkdir -p /home/backup
+> ```
+
+### بکاپ فایل‌های وردپرس با tar:
+```bash
+tar -czvf /home/backup/wp-files-$(date +%Y-%m-%d_%H-%M-%S).tar.gz /var/www/yourdomain
+```
+
+### بکاپ اتوماتیک با اسکریپت و Cronjob
+
+**اسکریپت بکاپ دیتابیس:**
+```bash
+#!/bin/bash
+mysqldump -u USER -p'PASSWORD' DATABASE > /home/backup/wp-db-$(date +%Y-%m-%d_%H-%M-%S).sql
+find /home/backup/ -type f -name \"wp-db-*.sql\" -mtime +7 -delete
+```
+
+**اسکریپت بکاپ فایل‌ها:**
+```bash
+#!/bin/bash
+tar -czvf /home/backup/wp-files-$(date +%Y-%m-%d_%H-%M-%S).tar.gz /var/www/yourdomain
+find /home/backup/ -type f -name \"wp-files-*.tar.gz\" -mtime +7 -delete
+```
+
+**ساخت Cronjob:**
+```bash
+crontab -e
+# هر روز ساعت ۳ صبح دیتابیس و ساعت ۳:۳۰ فایل‌ها:
+0 3 * * * /bin/bash /path/to/backup_db.sh
+30 3 * * * /bin/bash /path/to/backup_files.sh
+```
+
+**نکته امنیتی:**
+```bash
+chmod 700 /home/backup
+```
+
+### افزونه بکاپ ابری (UpdraftPlus)
+- نصب از پیشخوان وردپرس > افزونه‌ها > افزودن > جستجو UpdraftPlus
 
 ---
 
