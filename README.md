@@ -199,6 +199,44 @@ chmod 700 /home/backup
 
 ---
 
+---
+
+## 🤔 سوال مهم: آیا اسکریپت نصب کرش نمی‌کند و مصرف منابع بهینه است؟
+
+- مناسب سرورهای 1 تا 4 گیگ رم و CPU معمولی
+- سرویس‌های سنگین مثل Netdata را فقط در مواقع نیاز فعال کن
+- اندازه کش‌ها و تنظیمات دیتابیس را بسته به منابع سرور کم/زیاد کن
+- با اسکریپت مانیتورینگ و Netdata مصرف منابع را همیشه چک کن
+
+---
+
+## 🌐 اضافه کردن دامنه و ساب‌دامنه به nginx (قدم‌به‌قدم)
+
+### دامنه جدید:
+```bash
+sudo mkdir -p /var/www/yourdomain.ir
+sudo nano /etc/nginx/sites-available/yourdomain.ir
+# قرار دادن کانفیگ بالا
+sudo ln -s /etc/nginx/sites-available/yourdomain.ir /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+sudo certbot --nginx -d yourdomain.ir -d www.yourdomain.ir --email youremail@example.com --agree-tos --redirect --non-interactive
+```
+
+### ساب دامنه:
+```bash
+sudo mkdir -p /var/www/blog.yourdomain.ir
+sudo nano /etc/nginx/sites-available/blog.yourdomain.ir
+# قرار دادن کانفیگ بالا
+sudo ln -s /etc/nginx/sites-available/blog.yourdomain.ir /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+sudo certbot --nginx -d blog.yourdomain.ir --email youremail@example.com --agree-tos --redirect --non-interactive
+```
+
+---
+
+
 ## 📊 سوالات رایج
 
 #### اتصال دیتابیس با Navicat؟
