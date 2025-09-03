@@ -240,14 +240,29 @@ sudo certbot --nginx -d blog.yourdomain.ir --email youremail@example.com --agree
 
 برای نصب Netdata و مشاهده گراف منابع سرور در داشبورد تحت وب:
 
+## 🚦 نصب Netdata و حل مشکل نصب
+
+اگر دستور زیر خطای html یا ری‌دایرکت داد:
 ```bash
 bash <(curl -Ss https://my-netdata.io/kickstart.sh)
 ```
+از آدرس رسمی جدید یا نصب مستقیم با apt استفاده کن:
 
-سپس در مرورگر برو به:
+### نصب جدید با اسکریپت:
+```bash
+bash <(curl -Ss https://raw.githubusercontent.com/netdata/netdata/master/packaging/installer/kickstart.sh)
 ```
+
+### یا نصب با apt:
+```bash
+sudo apt update
+sudo apt install netdata -y
+sudo systemctl start netdata
+sudo systemctl enable netdata
+```
+
+داشبورد:  
 http://your-server-ip:19999
-```
 و همه منابع را به صورت گراف زنده ببین!
 
 
