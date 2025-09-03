@@ -4,7 +4,6 @@ by [WebCodex.ir](https://github.com/WebCodex-ir)
 ---
 
 ## 🔥 ویژگی‌ها
-
 - نصب اتوماتیک وردپرس، Nginx، MariaDB، PHP، Redis، SSL رایگان
 - امنیت بالا (UFW, Fail2Ban, SSH Hardening, SSL)
 - سرعت بهینه (کشینگ Redis, Gzip, MariaDB Tuning)
@@ -21,7 +20,7 @@ by [WebCodex.ir](https://github.com/WebCodex-ir)
 ### 1️⃣ اجرای اسکریپت نصب
 
 ```bash
-wget https://raw.githubusercontent.com/WebCodex-ir/Ubuntu-WordPress-Nginex/install_wordpress_nginx.sh
+wget https://raw.githubusercontent.com/WebCodex-ir/Ubuntu-WordPress-Nginex/main/install_wordpress_nginx.sh
 chmod +x install_wordpress_nginx.sh
 sudo ./install_wordpress_nginx.sh
 ```
@@ -68,7 +67,7 @@ wp plugin deactivate plugin-slug --path=/var/www/دامنه‌ات
 برای مانیتورینگ سریع منابع (CPU, RAM, Disk, Net):
 
 ```bash
-wget https://raw.githubusercontent.com/WebCodex-ir/Ubuntu-WordPress-Nginex/server_monitor.sh
+wget https://raw.githubusercontent.com/WebCodex-ir/Ubuntu-WordPress-Nginex/main/server_monitor.sh
 chmod +x server_monitor.sh
 ./server_monitor.sh
 ```
