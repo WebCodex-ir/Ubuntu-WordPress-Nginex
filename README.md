@@ -113,6 +113,24 @@ nc -zv SERVER_IP PORT
 nc -zv your.server.ip 3306
 ```
 
+## 🚦 باز و بسته کردن پورت با UFW
+
+### باز کردن پورت:
+```bash
+sudo ufw allow 3306/tcp
+```
+
+### بستن پورت:
+```bash
+sudo ufw deny 3306/tcp
+```
+
+### حذف قانون پورت:
+```bash
+sudo ufw status numbered
+sudo ufw delete شماره_قانون
+```
+
 ---
 
 ## ⚡ اتصال افزونه LiteSpeed Cache وردپرس به Redis
